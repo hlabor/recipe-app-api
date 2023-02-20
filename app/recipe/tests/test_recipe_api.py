@@ -28,6 +28,7 @@ def detail_url(recipe_id):
     """Create and return a recipe detail URL."""
     return reverse('recipe:recipe-detail', args=[recipe_id])
 
+
 def create_recipe(user, **params):
     """Create and return a sample recipe."""
     defaults = {
@@ -41,6 +42,7 @@ def create_recipe(user, **params):
 
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
+
 
 def create_user(**params):
     """Create and return a new user."""
@@ -65,7 +67,10 @@ class PrivateRecipeAPITests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = create_user(email='test@example.com', password='testpass123')
+        self.user = create_user(
+            email='test@example.com',
+            password='testpass123'
+        )
         self.client.force_authenticate(user=self.user)
 
     def test_retrieve_recipes(self):
@@ -82,7 +87,10 @@ class PrivateRecipeAPITests(TestCase):
 
     def test_recipe_list_limited_to_user(self):
         """Test list of recipes is limited to authenticated user."""
-        other_user = create_user(email='other@example.com', password='password123')
+        other_user = create_user(
+            email='other@example.com',
+            password='password123'
+        )
         create_recipe(user=other_user)
         create_recipe(user=self.user)
 
@@ -110,7 +118,7 @@ class PrivateRecipeAPITests(TestCase):
             'time_minutes': 30,
             'price': Decimal('5.99'),
         }
-        res = self.client.post(RECIPES_URL, payload) # /api/recipes/recipe
+        res = self.client.post(RECIPES_URL, payload)  # /api/recipes/recipe
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         recipe = Recipe.objects.get(id=res.data['id'])
